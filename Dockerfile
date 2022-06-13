@@ -8,9 +8,9 @@ RUN pip install --no-cache-dir -r requirements.txt -r requirements-api.txt
 
 COPY ./wordcloud/* ./wordcloud/
 
-RUN python setup.py build_ext --inplace
+RUN RUN python setup.py build_ext --inplace
 
-RUN pip install wordcloud
+RUN pip install . 
 
 COPY ./api/* ./api/
 
