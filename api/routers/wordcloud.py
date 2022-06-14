@@ -1,12 +1,12 @@
-from typing import List
+from typing import List, Union
 from .. import schemas
 from fastapi import APIRouter, HTTPException, Response, status, File, UploadFile
 from fastapi.responses import StreamingResponse, FileResponse
-from numpy import array, reshape
+from numpy import array, ndarray, reshape
 from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator, random_color_func, get_single_color_func
 import matplotlib.pyplot as plt
-
-# from io import BytesIO
+from PIL import Image
+from io import BytesIO
 
 router = APIRouter(
     prefix="/wordcloud",
@@ -17,16 +17,18 @@ test_text = "Hello World this is the Word Cloud Generator."
 
 @router.put("/", status_code=status.HTTP_201_CREATED , response_model=schemas.WordcloudBase)
 async def extended(text: str = test_text,
-                    width: int = 500,
-                    height: int = 500,
+                    font: Union[bytes, None] = File(default=None),
+                    width: int = 400,
+                    height: int = 200,
                     prefer_horizontal: float = 0.90,
+                    mask: Union[bytes, None] = File(default=None),
                     contour_width: float = 0,
                     contour_color: str = "black",
                     scale: float = 1,
                     min_font_size: int = 4,
                     font_step: int = 1,
                     max_words: int = 200,
-                    stopwords: str = None,
+                    stopwords: Union[bytes, None] = File(default=None),
                     background_color: str = "black",
                     max_font_size: int = None,
                     mode: str = "RGB",
@@ -45,16 +47,19 @@ async def extended(text: str = test_text,
     if relative_scaling == -1:
         relative_scaling = "auto"
 
-    # if mask is not None:
-    #     mask = reshape(array(mask))
-    #     width = None
-    #     height = None
+    if font is not None:
+        font_path = font
+        
+    if mask is not None:
+        mask = ndarray(mask)
+        # pass
         
 
-    wordcloud: bytes = WordCloud(width=width,
+    wordcloud_arr = WordCloud(font_path=font,
+                        width=width,
                         height=height,
                         prefer_horizontal=prefer_horizontal,
-                        # mask=mask,
+                        mask=mask,
                         contour_width=contour_width,
                         contour_color=contour_color,
                         scale=scale,
@@ -75,8 +80,15 @@ async def extended(text: str = test_text,
                         include_numbers=include_numbers,
                         min_word_length=min_word_length,
                         collocation_threshold=collocation_threshold
-                        ).generate(text).to_file("wordcloud.png")
+                        ).generate(text).to_array()
                         
-    # wordcloud_file = "wordcloud.png"
+    wordcloud_img = Image.fromarray(wordcloud_arr)
 
-    return FileResponse("wordcloud.png")
+    wordcloud_buf = BytesIO()
+    wordcloud_img.save(wordcloud_buf, format='PNG')
+    wordcloud_buf.seek(0)
+
+    headers = {'Content-Disposition': 'inline; filename="wordcloud.png"'}
+    # headers = {'Content-Disposition': 'attachment; filename="wordcloud.png"'}
+    
+    return StreamingResponse(wordcloud_buf, headers=headers, media_type='image/png')
