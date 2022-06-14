@@ -1,6 +1,6 @@
 version: "3"
 services:
   api:
-    image: azcoigreach/word-cloud
+    image: azcoigreach/word_cloud_api
     ports:
       - 80:8000

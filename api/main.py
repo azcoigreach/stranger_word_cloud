@@ -21,7 +21,7 @@ You will be able to:
 app = FastAPI(
     title="word_cloud generator",
     description=description,
-    version="1.8.1+api-0.1.1",
+    version="api-0.1.2",
     contact={
         "email": "azcoigreach@gmail.com",
     },
