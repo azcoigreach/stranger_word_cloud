@@ -1,5 +1,6 @@
 from typing import List
-from fastapi import APIRouter, File, UploadFile
+from .. import schemas
+from fastapi import APIRouter, HTTPException, Response, status, File, UploadFile
 from fastapi.responses import StreamingResponse, FileResponse
 from numpy import array, reshape
 from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator, random_color_func, get_single_color_func
@@ -14,7 +15,7 @@ router = APIRouter(
 
 test_text = "Hello World this is the Word Cloud Generator."
 
-@router.put("/")
+@router.put("/", status_code=status.HTTP_201_CREATED , response_model=schemas.WordcloudBase)
 async def extended(text: str = test_text,
                     width: int = 500,
                     height: int = 500,
@@ -26,9 +27,9 @@ async def extended(text: str = test_text,
                     font_step: int = 1,
                     max_words: int = 200,
                     stopwords: str = None,
-                    background_color: str = "#00000000",
+                    background_color: str = "black",
                     max_font_size: int = None,
-                    mode: str = "RGBA",
+                    mode: str = "RGB",
                     relative_scaling: float = -1,
                     # color_func: str = None,
                     regexp: str = None,
