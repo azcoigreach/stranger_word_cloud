@@ -48,11 +48,16 @@ async def extended(text: str = test_text,
         relative_scaling = "auto"
 
     if font is not None:
-        font_path = font
+        font = bytes(font)
         
     if mask is not None:
-        mask = ndarray(mask)
-        # pass
+        mask_img = Image.open(BytesIO(mask))
+        mask = array(mask_img)
+
+    if stopwords is not None:
+        pass
+    else:
+        stopwords = STOPWORDS
         
 
     wordcloud_arr = WordCloud(font_path=font,
