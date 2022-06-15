@@ -1,0 +1,6 @@
+## word_cloud_api database
+Run to setup postgres
+```
+alembic upgrade head
+```
+After main install | After docker spawn, inside container.

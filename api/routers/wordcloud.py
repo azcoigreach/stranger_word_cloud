@@ -1,7 +1,10 @@
 from typing import List, Union
-from .. import schemas
-from fastapi import APIRouter, HTTPException, Response, status, File, UploadFile
+from .. import schemas, models, oauth2
+from fastapi import APIRouter, HTTPException, Response, status, File, UploadFile, Depends
 from fastapi.responses import StreamingResponse, FileResponse
+from sqlalchemy.orm import Session
+from sqlalchemy import func
+from ..database import get_db
 from numpy import array, ndarray, reshape
 from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator, random_color_func, get_single_color_func
 import matplotlib.pyplot as plt
@@ -16,7 +19,8 @@ router = APIRouter(
 test_text = "Hello World this is the Word Cloud Generator."
 
 @router.put("/", status_code=status.HTTP_201_CREATED , response_model=schemas.WordcloudBase)
-async def extended(text: str = test_text,
+async def extended(db: Session = Depends(get_db), current_user: int = Depends (oauth2.get_current_user),
+                    text: str = test_text,
                     font: Union[bytes, None] = File(default=None),
                     width: int = 400,
                     height: int = 200,
@@ -94,6 +98,5 @@ async def extended(text: str = test_text,
     wordcloud_buf.seek(0)
 
     headers = {'Content-Disposition': 'inline; filename="wordcloud.png"'}
-    # headers = {'Content-Disposition': 'attachment; filename="wordcloud.png"'}
     
     return StreamingResponse(wordcloud_buf, headers=headers, media_type='image/png')
