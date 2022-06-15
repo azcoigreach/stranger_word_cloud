@@ -5,6 +5,7 @@ from .routers import wordcloud
 
 description = """
 A FastAPI word cloud generator in Python
+
 https://github.com/azcoigreach/word_cloud_api/wiki
 
 ## Colormaps
@@ -12,7 +13,7 @@ https://github.com/azcoigreach/word_cloud_api/wiki
 """
 
 app = FastAPI(
-    title="word_cloud generator",
+    title="word_cloud_api",
     description=description,
     version="api-0.1.5",
     contact={
