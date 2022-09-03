@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .config import settings
-from .routers import wordcloud, user, auth
+from .routers import wordcloud
 
 description = """
 A FastAPI word cloud generator in Python
