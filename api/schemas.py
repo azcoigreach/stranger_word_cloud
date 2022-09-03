@@ -1,5 +1,5 @@
 from typing import Optional, Union
-from pydantic import BaseModel, Field, EmailStr, conint
+from pydantic import BaseModel, Field, conint
 from datetime import datetime
 
 class WordcloudBase(BaseModel):
