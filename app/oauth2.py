@@ -23,8 +23,8 @@ def create_access_token(data: dict):
 
 def create_api_token(data: dict):
     to_encode = data.copy()
-    expire = None
-    to_encode.update({"exp": expire})
+    # expire = None
+    # to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
     return encoded_jwt
