@@ -1,6 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .routers import wordcloud
+from . import models
+from .database import engine
+from .routers import wordcloud, admin, auth
+from .config import settings
 
 description = """
 A FastAPI word cloud generator in Python
@@ -14,10 +17,11 @@ https://github.com/azcoigreach/word_cloud_api/wiki
 app = FastAPI(
     title="word_cloud_api",
     description=description,
-    version="api-0.2.0",
+    version="api-0.2.1",
     contact={
         "email": "azcoigreach@gmail.com",
     },
+    docs_url="/docs", redoc_url=None,
 )
 
 origins = ["*"] # Configured for public API
@@ -31,6 +35,8 @@ app.add_middleware(
 )
 
 app.include_router(wordcloud.router)
+app.include_router(admin.router)
+app.include_router(auth.router)
 
 @app.get("/")
 async def root():

@@ -1,7 +1,10 @@
 from typing import List, Union
-from .. import schemas
+from .. import models, schemas, utils, oauth2
 from fastapi import APIRouter, HTTPException, Response, status, File, UploadFile, Depends
 from fastapi.responses import StreamingResponse, FileResponse
+from sqlalchemy.orm import Session
+from sqlalchemy import func
+from ..database import get_db
 from numpy import array, ndarray, reshape
 from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator, random_color_func, get_single_color_func
 import matplotlib.pyplot as plt
@@ -15,8 +18,14 @@ router = APIRouter(
 
 test_text = "Hello World this is the Word Cloud Generator."
 
+'''
+Generate a word cloud from a string
+must be registered user
+'''
+
 @router.put("/", status_code=status.HTTP_201_CREATED , response_model=schemas.WordcloudBase)
-async def extended(text: str = test_text,
+async def extended(db: Session = Depends(get_db), current_user: int = Depends (oauth2.get_current_user),
+                    text: str = test_text,
                     font: Union[bytes, None] = File(default=None),
                     width: int = 400,
                     height: int = 200,
@@ -42,13 +51,30 @@ async def extended(text: str = test_text,
                     include_numbers: bool = False,
                     min_word_length: int = 0,
                     collocation_threshold: int = 30
+
                     ):
+    
+    if not current_user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized")
+    if not current_user.is_active:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Inactive user")
 
     if relative_scaling == -1:
         relative_scaling = "auto"
 
+    # if font:
+    #     font = Image.open(BytesIO(font))
+
+    # if mask:
+    #     mask = Image.open(BytesIO(mask))
+    
+    # if stopwords:
+    #     stopwords = Image.open(BytesIO(stopwords))
+    # else:
+    #     stopwords = STOPWORDS
+
     if font is not None:
-        font = bytes(font)
+        font = BytesIO(font)
         
     if mask is not None:
         mask_img = Image.open(BytesIO(mask))

@@ -6,7 +6,7 @@ COPY ./* ./
 
 COPY ./wordcloud/* ./wordcloud/
 
-COPY ./api/* ./api/
+COPY ./app/* ./app/
 
 RUN pip install --no-cache-dir -r requirements.txt -r requirements-api.txt
 

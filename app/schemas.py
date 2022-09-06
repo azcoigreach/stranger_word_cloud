@@ -1,5 +1,5 @@
 from typing import Optional, Union
-from pydantic import BaseModel, Field, conint
+from pydantic import BaseModel, EmailStr, Field, conint
 from datetime import datetime
 
 class WordcloudBase(BaseModel):
@@ -29,3 +29,34 @@ class WordcloudBase(BaseModel):
     include_numbers: bool
     min_word_length: int
     collocation_threshold: int
+
+class UserResponse(BaseModel):
+    id: int
+    email: EmailStr
+    created_at: datetime
+    is_active: bool
+    is_admin: bool
+
+    class Config:
+        orm_mode = True
+
+class UserCreate(BaseModel):
+    email: EmailStr
+    password: str
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class ApiToken(BaseModel):
+    user_id: int
+    access_token: str
+    token_type: str
+    
+
+class TokenData(BaseModel):
+    id: Optional[str] = None
