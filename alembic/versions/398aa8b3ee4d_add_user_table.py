@@ -24,7 +24,6 @@ def upgrade():
                     sa.Column('created_at', sa.TIMESTAMP(timezone=True),
                               server_default=sa.text('now()'), nullable=False),
                     sa.Column('is_active', sa.Boolean(), nullable=False, default=True),
-                    sa.Column('is_superuser', sa.Boolean(), nullable=False, default=False),
                     sa.Column('is_admin', sa.Boolean(), nullable=False, default=False),
                     sa.PrimaryKeyConstraint('id'),
                     sa.UniqueConstraint('email')
