@@ -23,8 +23,8 @@ def create_access_token(data: dict):
 
 def create_api_token(data: dict):
     to_encode = data.copy()
-    expire = datetime.utcnow() + timedelta(days=365)
-    to_encode.update({"exp": expire})
+    # expire = None
+    # to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
     return encoded_jwt
@@ -42,8 +42,6 @@ def verify_access_token(token: str, credentials_exception):
     return token_data
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(database.get_db)):
-    # check if user is active
-    # check if user is admin
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",

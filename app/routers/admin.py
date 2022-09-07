@@ -222,5 +222,5 @@ def generate_token(
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                                 detail=f"User is not active")                        
         else:
-            access_token = oauth2.create_access_token(data = {"user_id": id})
+            access_token = oauth2.create_api_token(data = {"user_id": id})
             return {"user_id": id, "access_token": access_token, "token_type": "bearer"}
